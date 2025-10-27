@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAppStore } from './store/useAppStore';
-import { mockMachines } from './lib/mockData';
+import { mockMachines, mockTemplates } from './lib/mockData';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Machines from './pages/Machines';
@@ -11,12 +11,15 @@ import Settings from './pages/Settings';
 import AddMachineWizard from './pages/AddMachineWizard';
 
 function App() {
-  const { machines, addMachine } = useAppStore();
+  const { machines, templates } = useAppStore();
 
   // Initialize with mock data
   useEffect(() => {
     if (machines.length === 0) {
-      mockMachines.forEach(machine => addMachine(machine));
+      mockMachines.forEach(machine => useAppStore.getState().addMachine(machine));
+    }
+    if (templates.length === 0) {
+      useAppStore.setState({ templates: mockTemplates });
     }
   }, []);
 

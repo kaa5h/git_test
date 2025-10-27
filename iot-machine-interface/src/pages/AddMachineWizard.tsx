@@ -40,11 +40,14 @@ const AddMachineWizard = () => {
     navigate('/');
   };
 
-  const CurrentStepComponent = steps[currentStep - 1].component;
+  const CurrentStepComponent = steps[currentStep - 1]?.component || Step1BasicInfo;
 
   const canGoNext = () => {
     if (currentStep === 1) {
-      return wizardData.basicInfo.name && wizardData.basicInfo.type;
+      const hasName = wizardData.basicInfo.name && wizardData.basicInfo.name.trim().length > 0;
+      const hasType = Boolean(wizardData.basicInfo.type);
+      console.log('Step 1 validation:', { hasName, hasType, name: wizardData.basicInfo.name, type: wizardData.basicInfo.type });
+      return hasName && hasType;
     }
     if (currentStep === 2) {
       return wizardData.protocol.type !== '';
@@ -127,25 +130,32 @@ const AddMachineWizard = () => {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between">
-          <div>
-            <Button variant="ghost" onClick={handleCancel}>
-              Cancel
-            </Button>
-          </div>
-          <div className="flex items-center gap-3">
-            {currentStep > 1 && (
-              <Button variant="outline" onClick={handlePrev}>
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Previous
+        <div className="flex flex-col gap-2">
+          {currentStep === 1 && !canGoNext() && (
+            <div className="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+              Please fill in Machine Name and Type to continue
+            </div>
+          )}
+          <div className="flex items-center justify-between">
+            <div>
+              <Button variant="ghost" onClick={handleCancel}>
+                Cancel
               </Button>
-            )}
-            {currentStep < 5 && (
-              <Button onClick={handleNext} disabled={!canGoNext()}>
-                Next
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            )}
+            </div>
+            <div className="flex items-center gap-3">
+              {currentStep > 1 && (
+                <Button variant="outline" onClick={handlePrev}>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+              )}
+              {currentStep < 5 && (
+                <Button onClick={handleNext} disabled={!canGoNext()}>
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
